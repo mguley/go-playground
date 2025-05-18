@@ -34,3 +34,9 @@ ls -la
 Learn how the Go compiler optimizes memory allocation through escape analysis.
 This scenario demonstrates how variables are allocated on the stack or heap, how to read escape analysis output, and 
 techniques to optimize performance by controlling memory allocation.
+
+### [Scenario 2: No Garbage Collection in Go](./scenario-02-no-gc-in-go/)
+
+Explore the controversial technique of disabling Go's garbage collector for ultra-latency sensitive applications.
+This scenario demonstrates the impact of garbage collection on performance, implements proper memory management strategies,
+and explores hybrid approaches that balance predictable latency with memory stability.
