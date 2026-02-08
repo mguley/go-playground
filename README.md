@@ -65,3 +65,18 @@ to systematically diagnose and optimize performance issues.
 - Goroutine and block profiling for concurrency issues
 - Execution trace analysis for deep runtime insights
 - Continuous profiling infrastructure for production monitoring
+
+#### [Scenario 4: Saga Orchestration pattern in Go](./scenario-04-saga-orchestration-pattern-in-go/)
+
+Build resilient distributed transactions using the Saga Orchestration pattern.
+This scenario implements a complete travel booking system that coordinates flight, hotel, and car rental
+services, demonstrating how to handle failures gracefully through compensating transactions when operations
+span multiple independent services.
+
+**Key Topics:**
+- Understanding distributed transactions and the limitations of traditional ACID
+- Implementing the Saga Orchestration pattern for coordinating microservices
+- Designing idempotent compensation functions for reliable rollback
+- Building a flexible saga framework with retry and timeout handling
+- Testing failure scenarios to validate compensation behavior
+- Adding observability through events, logging, and metrics
