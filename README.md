@@ -80,3 +80,18 @@ span multiple independent services.
 - Building a flexible saga framework with retry and timeout handling
 - Testing failure scenarios to validate compensation behavior
 - Adding observability through events, logging, and metrics
+
+#### [Scenario 5: Saga Choreography pattern in Go](./scenario-05-saga-choreography-pattern-in-go/)
+
+Build distributed transactions using the Saga Choreography pattern, where services coordinate through events with no central orchestrator. 
+This scenario implements an e-commerce order processing system with four independent services that communicate exclusively through an event bus,
+handling failures through automatic compensating transactions.
+
+**Key Topics:**
+- Understanding choreography-based saga coordination
+- Designing event-driven communication between microservices
+- Implementing compensating transactions for distributed rollback
+- Building local caches to solve cross-service data availability
+- State machine validation for concurrent event processing
+- Idempotency guards for at-least-once event delivery
+- Monitoring and observability for distributed workflows
