@@ -96,7 +96,7 @@ handling failures through automatic compensating transactions.
 - Idempotency guards for at-least-once event delivery
 - Monitoring and observability for distributed workflows
 
-#### [Scenario 6: Fuzz Testing and Property-Based Testing in Go](./scenario-06-fuzz-testing-in-go/)
+#### [Scenario 6: Fuzz testing and property-based testing in Go](./scenario-06-fuzz-testing-in-go/)
 
 Discover how Go's built-in fuzz testing framework uncovers defects that carefully crafted unit tests miss entirely.
 This scenario builds a lightweight key-value data format from scratch - a text parser and a binary codec - and uses
