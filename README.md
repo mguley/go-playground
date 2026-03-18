@@ -95,3 +95,18 @@ handling failures through automatic compensating transactions.
 - State machine validation for concurrent event processing
 - Idempotency guards for at-least-once event delivery
 - Monitoring and observability for distributed workflows
+
+#### [Scenario 6: Fuzz testing and property-based testing in Go](./scenario-06-fuzz-testing-in-go/)
+
+Discover how Go's built-in fuzz testing framework uncovers defects that carefully crafted unit tests miss entirely.
+This scenario builds a lightweight key-value data format from scratch - a text parser and a binary codec - and uses
+coverage-guided fuzzing and property-based roundtrip testing to find crash-causing boundary errors, silent data
+corruption, and subtle Go-specific pitfalls like UTF-8 replacement during rune iteration.
+
+**Key Topics:**
+- Understanding coverage-guided fuzz testing and how it differs from random input generation
+- Writing crash-resistance fuzz tests to verify parsers never panic on arbitrary input
+- Property-based roundtrip testing to ensure encode/decode consistency
+- Interpreting fuzzer-discovered corpus files and tracing root causes
+- Testing structural invariants across text serialization roundtrips
+- Recognizing and avoiding silent data corruption from Go's rune iteration over non-UTF-8 strings
