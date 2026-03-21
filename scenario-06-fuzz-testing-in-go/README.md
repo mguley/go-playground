@@ -147,7 +147,7 @@ A parser that panics on unexpected input is a security vulnerability if that inp
 Let us create our project structure and initialize the module:
 
 ```bash
-mkdir -p fuzz-testing/{pkg/parser,codec}
+mkdir -p fuzz-testing/{pkg/parser,pkg/codec}
 cd fuzz-testing
 go mod init fuzz-testing
 ```
