@@ -83,7 +83,7 @@ span multiple independent services.
 
 #### [Scenario 5: Saga Choreography pattern in Go](./scenario-05-saga-choreography-pattern-in-go/)
 
-Build distributed transactions using the Saga Choreography pattern, where services coordinate through events with no central orchestrator. 
+Build distributed transactions using the Saga Choreography pattern, where services coordinate through events with no central orchestrator.
 This scenario implements an e-commerce order processing system with four independent services that communicate exclusively through an event bus,
 handling failures through automatic compensating transactions.
 
@@ -110,3 +110,19 @@ corruption, and subtle Go-specific pitfalls like UTF-8 replacement during rune i
 - Interpreting fuzzer-discovered corpus files and tracing root causes
 - Testing structural invariants across text serialization roundtrips
 - Recognizing and avoiding silent data corruption from Go's rune iteration over non-UTF-8 strings
+
+#### [Scenario 7: Event sourcing and CQRS in Go](./scenario-07-event-sourcing-and-cqrs-in-go/)
+
+Build a complete bank account system using event sourcing and CQRS, where state is derived from an immutable
+log of domain events rather than stored directly. This scenario implements an event store with optimistic
+concurrency control, aggregates that enforce business rules through events, read-model projections for
+efficient querying, and snapshots to keep event replay fast as streams grow.
+
+**Key Topics:**
+- Understanding event sourcing as an alternative to state-based persistence
+- Building an append-only event store with optimistic concurrency control
+- Implementing aggregates that derive state from event replay
+- Separating reads from writes using CQRS projections
+- Snapshotting long event streams for efficient aggregate loading
+- Testing event-sourced systems with given-when-then style assertions
+- Handling cross-aggregate operations and their consistency tradeoffs
