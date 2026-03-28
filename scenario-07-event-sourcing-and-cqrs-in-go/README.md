@@ -5,6 +5,7 @@
 - [What is event sourcing?](#what-is-event-sourcing)
 - [What is CQRS?](#what-is-cqrs)
 - [Why combine event sourcing with CQRS?](#why-combine-event-sourcing-with-cqrs)
+- [Architecture overview](#architecture-overview)
 - [Prerequisites](#prerequisites)
 - [Step 1: Understanding our domain - a bank account system](#step-1-understanding-our-domain---a-bank-account-system)
 - [Step 2: Defining events - the source of truth](#step-2-defining-events---the-source-of-truth)
@@ -143,6 +144,77 @@ With event sourcing, the read side simply subscribes to the event stream - the s
 
 Together, they form a cohesive architecture where the event store is the single source of truth, commands validate business rules and append events,
 and projections consume events to build query-optimized views.
+
+---
+
+#### Architecture overview
+
+The diagram below shows the complete system we will build in this walkthrough.
+The top half is the **write path**: commands enter the command handler, which loads the aggregate's event history from the store,
+rebuilds its state, delegates the command to the aggregate for business-rule validation, and persists the resulting events back
+to the append-only event store with an optimistic concurrency check. The snapshot store is an optional acceleration layer -
+when a snapshot exists, the handler loads it and replays only the events that occurred after the snapshot version, avoiding a
+full replay of the entire stream.
+
+The bottom half is the **read path**: every event persisted to the store is delivered to registered subscribers.
+The balance projection and ledger projection each subscribe independently, updating their own query optimized data structures
+as events arrive. Queries hit the projections directly and never touch the event store - this is the core of the CQRS separation.
+
+```mermaid
+graph TB
+    subgraph WRITE ["Write side - command model"]
+        CMD["Commands<br/><i>OpenAccount · Deposit<br/>Withdraw · Transfer</i>"]
+        CH["CommandHandler<br/><i>1. Load events from store<br/>2. Rebuild aggregate<br/>3. Execute command<br/>4. Save new events</i>"]
+        AGG["Account Aggregate<br/><i>Enforces business rules<br/>Raises domain events</i>"]
+        SCH["SnapshotCommandHandler<br/><i>Loads snapshot + recent events<br/>Takes snapshots every N events</i>"]
+    end
+
+    subgraph PERSIST ["Persistence layer"]
+        ES["Event Store<br/><i>Append-only log<br/>Optimistic concurrency<br/>via expectedVersion</i>"]
+        SS["Snapshot Store<br/><i>Checkpoint of aggregate<br/>state at version N</i>"]
+    end
+
+    subgraph EVENTS_SECTION [" "]
+        EV["Domain Events<br/><i>AccountOpened<br/>MoneyDeposited<br/>MoneyWithdrawn</i>"]
+    end
+
+    subgraph READ ["Read side - query model (projections)"]
+        BP["BalanceProjection<br/><i>O(1) account balance lookup</i>"]
+        LP["LedgerProjection<br/><i>Chronological transaction<br/>history with running balance</i>"]
+    end
+
+    QUERIES["Queries<br/><i>GetAccount · GetAllAccounts<br/>GetTransactions · GetRecentTransactions</i>"]
+
+    CMD -->|"send command"| CH
+    CH <-->|"load events /<br/>rebuild state"| AGG
+    AGG -.->|"raises events"| EV
+    CH -->|"SaveEvents<br/>(version check)"| ES
+    ES -->|"LoadEvents /<br/>LoadEventsFrom"| CH
+    SCH -->|"load / save<br/>snapshot"| SS
+    SCH -.->|"extends"| CH
+    SS -.->|"snapshot + recent<br/>events only"| ES
+    ES -->|"notify subscribers"| EV
+    EV -->|"handleEvent()"| BP
+    EV -->|"handleEvent()"| LP
+    BP --> QUERIES
+    LP --> QUERIES
+
+    style WRITE fill:none,stroke:#2980b9,stroke-width:2px,stroke-dasharray:6 3
+    style PERSIST fill:none,stroke:#f39c12,stroke-width:2px,stroke-dasharray:6 3
+    style READ fill:none,stroke:#27ae60,stroke-width:2px,stroke-dasharray:6 3
+    style EVENTS_SECTION fill:none,stroke:none
+
+    style CMD fill:#e8f4f8,stroke:#2980b9,color:#1a1a1a
+    style CH fill:#e8f4f8,stroke:#2980b9,color:#1a1a1a
+    style AGG fill:#eeedfe,stroke:#534ab7,color:#1a1a1a
+    style SCH fill:#e1f5ee,stroke:#0f6e56,color:#1a1a1a
+    style ES fill:#faeeda,stroke:#ba7517,color:#1a1a1a
+    style SS fill:#e1f5ee,stroke:#0f6e56,color:#1a1a1a
+    style EV fill:#faece7,stroke:#d85a30,color:#1a1a1a
+    style BP fill:#eaf3de,stroke:#3b6d11,color:#1a1a1a
+    style LP fill:#eaf3de,stroke:#3b6d11,color:#1a1a1a
+    style QUERIES fill:#f4ecf7,stroke:#8e44ad,color:#1a1a1a
+```
 
 ---
 
